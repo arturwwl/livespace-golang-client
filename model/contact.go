@@ -45,16 +45,23 @@ type ContactData struct {
 	DatasetFieldName *map[string]*string     `json:"dataset_field_name,omitempty"`
 	DatasetFieldType *map[string]*string     `json:"dataset_field_type,omitempty"`
 
-	FirstName     string   `json:"firstname,omitempty"`
-	LastName      string   `json:"lastname,omitempty"`
-	Note          *string  `json:"note,omitempty"`
-	Position      *string  `json:"position,omitempty"`
-	ContactSource *string  `json:"contact_source,omitempty"`
-	WWW           *string  `json:"www,omitempty"`
-	Emails        *[]Email `json:"emails,omitempty"`
-	Phones        *[]Phone `json:"phones,omitempty"`
+	FirstName     string     `json:"firstname,omitempty"`
+	LastName      string     `json:"lastname,omitempty"`
+	Note          *string    `json:"note,omitempty"`
+	Position      *string    `json:"position,omitempty"`
+	ContactSource *string    `json:"contact_source,omitempty"`
+	WWW           *string    `json:"www,omitempty"`
+	Emails        *[]Email   `json:"emails,omitempty"`
+	Phones        *[]Phone   `json:"phones,omitempty"`
+	Addresses     *[]Address `json:"addresses,omitempty"`
 }
 
+type Address struct {
+	Street     *string `json:"street,omitempty"`
+	City       *string `json:"city,omitempty"`
+	PostalCode *string `json:"postcode,omitempty"`
+	Country    *string `json:"country,omitempty"`
+}
 type Email struct {
 	Email     string `json:"email,omitempty"`
 	IsDefault *bool  `json:"is_default,omitempty"`

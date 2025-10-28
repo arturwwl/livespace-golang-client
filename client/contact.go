@@ -34,10 +34,10 @@ func (c *LivespaceClient) CreateContact(contactM *model.ContactData) error {
 }
 
 // GetContact searches for existing contact using api
-func (c *LivespaceClient) GetContact(request model.ContactData) (contactM *model.ContactData, err error) {
-	list, err := c.ListContact(request)
+func (c *LivespaceClient) GetContact(filters model.ListContactFilters) (*model.ContactData, error) {
+	list, err := c.ListContact(filters)
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	if len(list) > 0 {
@@ -48,24 +48,24 @@ func (c *LivespaceClient) GetContact(request model.ContactData) (contactM *model
 }
 
 // ListContact gets list for existing contacts using api
-func (c *LivespaceClient) ListContact(request model.ContactData) (contactM []model.ContactData, err error) {
-	aRequest := model.ListContact{
-		AuthorizedRequest: model.AuthorizedRequest{},
-		PaginatedRequest:  model.PaginatedRequest{},
-		ContactData:       request,
+func (c *LivespaceClient) ListContact(filters model.ListContactFilters) ([]model.ContactData, error) {
+	var err error
+	request := model.ListContact{
+		AuthorizedRequest:  model.AuthorizedRequest{},
+		PaginatedRequest:   model.PaginatedRequest{},
+		ListContactFilters: filters,
 	}
 
-	aRequest.AuthorizedRequest, err = c.prepareAuthorizedRequest()
+	request.AuthorizedRequest, err = c.prepareAuthorizedRequest()
 	if err != nil {
 		return nil, err
 	}
 
-	aRequest.AuthorizedRequest.Type = "contact"
-	aRequest.Limit = 1
+	request.AuthorizedRequest.Type = "contact"
 
 	responseBytes, err := c.makeRequest("Contact/getAll", request, false)
 	if err != nil {
-		return contactM, err
+		return nil, err
 	}
 
 	var contactList model.ContactList

@@ -14,7 +14,9 @@ func TestGetContact(t *testing.T) {
 	}
 
 	email := "testnil@example.com"
-	contactM, err := client.GetContact(&email, nil, nil)
+	contactM, err := client.GetContact(model.ListContactFilters{
+		Emails: helper.PointString(email),
+	})
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +26,7 @@ func TestGetContact(t *testing.T) {
 }
 
 func TestCreateContactNote(t *testing.T) {
-	client, err := livespace_client.New("conf/cfg.ini")
+	client, err := livespaceclient.New("conf/cfg.ini")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -40,7 +42,7 @@ func TestCreateContactNote(t *testing.T) {
 }
 
 func TestCreateContact(t *testing.T) {
-	client, err := livespace_client.New("conf/cfg.ini")
+	client, err := livespaceclient.New("conf/cfg.ini")
 	if err != nil {
 		t.Fatal(err)
 	}

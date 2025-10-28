@@ -4,7 +4,19 @@ package model
 type ListContact struct {
 	AuthorizedRequest
 	PaginatedRequest
-	ContactData
+	ListContactFilters
+}
+
+type ListContactFilters struct {
+	FirstNames    *string                 `json:"firstnames,omitempty"`
+	LastNames     *string                 `json:"lastnames,omitempty"`
+	Companies     *string                 `json:"companies,omitempty"`
+	Emails        *string                 `json:"emails,omitempty"`
+	Phones        *string                 `json:"phones,omitempty"`
+	OwnerLogin    *string                 `json:"owner_login,omitempty"`
+	Tags          *string                 `json:"tags,omitempty"`
+	TagsCondition *string                 `json:"tags_condition,omitempty"`
+	Dataset       *map[string]interface{} `json:"dataset,omitempty"`
 }
 
 // CreateContact represents api request for creating contact

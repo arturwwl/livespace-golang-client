@@ -6,10 +6,10 @@ import (
 )
 
 // CreateNote creates new note using api
-func (c *LivespaceClient) CreateNote(noteM model.NoteData) error {
+func (c *LivespaceClient) CreateNote(noteM *model.NoteData) error {
 	var err error
 	request := model.CreateNote{
-		Contact: noteM,
+		Contact: *noteM,
 	}
 	request.AuthorizedRequest, err = c.prepareAuthorizedRequest()
 	if err != nil {

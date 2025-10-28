@@ -21,25 +21,34 @@ func (c *LivespaceClient) getUrl(path string) string {
 	return fmt.Sprintf("%s/%s", c.Config.DevUrl, path)
 }
 
-func (c *LivespaceClient) prepareAuthorizedRequest() (req model.AuthorizedRequest, err error) {
+func (c *LivespaceClient) prepareAuthorizedRequest() (model.AuthorizedRequest, error) {
 	tokenO, err := c.GetAuth()
 	if err != nil {
-		return req, err
+		return model.AuthorizedRequest{}, err
 	}
 
-	req.ApiKey = c.Config.ApiKey
-	req.ApiSession = tokenO.Data.SessionID
+	req := model.AuthorizedRequest{
+		ApiKey:     c.Config.ApiKey,
+		ApiSession: tokenO.Data.SessionID,
+	}
+
 	//sha1 function on the character string created from the following concatenation: API_KEY, TOKEN,
 	//and API_SECRET
 	h := sha1.New()
-	h.Write([]byte(c.Config.ApiKey + tokenO.Data.Token + c.Config.ApiSecret))
+	_, err = h.Write([]byte(c.Config.ApiKey + tokenO.Data.Token + c.Config.ApiSecret))
+	if err != nil {
+		return model.AuthorizedRequest{}, err
+	}
 	shaBytes := h.Sum(nil)
 	req.ApiSHA = hex.EncodeToString(shaBytes)
 
-	return req, err
+	return req, nil
 }
 
-func (c *LivespaceClient) GetAuth() (tokenO model.Token, err error) {
+func (c *LivespaceClient) GetAuth() (model.Token, error) {
+	var tokenO model.Token
+	var err error
+
 	responseBytes, err := c.makeRequest("_Api/auth_call/_api_method/getToken", model.GetToken{
 		ApiKey:  c.Config.ApiKey,
 		ApiAuth: "key",
@@ -48,7 +57,10 @@ func (c *LivespaceClient) GetAuth() (tokenO model.Token, err error) {
 		return tokenO, err
 	}
 
-	_ = json.Unmarshal(responseBytes, &tokenO)
+	err = json.Unmarshal(responseBytes, &tokenO)
+	if err != nil {
+		return tokenO, err
+	}
 
 	if !tokenO.Status { //invalid response
 		return tokenO, fmt.Errorf("error result %d", tokenO.Result)

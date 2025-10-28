@@ -1,5 +1,6 @@
 package model
 
+// AuthorizedRequest represents all fields needed for authorized api request
 type AuthorizedRequest struct {
 	ApiKey     string `json:"_api_key,omitempty" form:"_api_key,omitempty"`
 	ApiSHA     string `json:"_api_sha,omitempty" form:"_api_sha,omitempty"`

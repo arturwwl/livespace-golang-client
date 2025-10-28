@@ -1,11 +1,13 @@
-package livespace_client
+package livespaceclient
 
 import (
 	"encoding/json"
 	"github.com/arturwwl/livespace-golang-client/model"
 )
 
-func (c *LivespaceClient) CreateContact(contactM *model.ContactData) (err error) { //TODO: custom error
+// CreateContact creates new contact using api
+func (c *LivespaceClient) CreateContact(contactM *model.ContactData) error {
+	var err error
 	request := model.CreateContact{
 		Contact: *contactM,
 	}
@@ -14,41 +16,63 @@ func (c *LivespaceClient) CreateContact(contactM *model.ContactData) (err error)
 		return err
 	}
 
-	if responseBytes, err := c.makeRequest("Contact/addContact", request, true); err != nil {
+	var responseBytes []byte
+	responseBytes, err = c.makeRequest("Contact/addContact", request, true)
+	if err != nil {
 		return err
-	} else {
-		contactSingle := model.ContactSingle{}
-		_ = json.Unmarshal(responseBytes, &contactSingle)
-		contactM = &contactSingle.Data.Contact
 	}
+
+	contactSingle := model.ContactSingle{}
+	err = json.Unmarshal(responseBytes, &contactSingle)
+	if err != nil {
+		return err
+	}
+
+	contactM = &contactSingle.Data.Contact
 
 	return nil
 }
 
-func (c *LivespaceClient) GetContact(emails *string, firstNames *string, lastNames *string) (contactM *model.ContactData, err error) { //TODO: custom error
-	request := model.GetContact{
-		AuthorizedRequest: model.AuthorizedRequest{},
-		PaginatedRequest:  model.PaginatedRequest{},
-		Emails:            emails,
-		Firstnames:        firstNames,
-		Lastnames:         lastNames,
+// GetContact searches for existing contact using api
+func (c *LivespaceClient) GetContact(request model.ContactData) (contactM *model.ContactData, err error) {
+	list, err := c.ListContact(request)
+	if err != nil {
+		return
 	}
 
-	request.AuthorizedRequest, err = c.prepareAuthorizedRequest()
+	if len(list) > 0 {
+		return &list[0], nil
+	}
+
+	return nil, nil
+}
+
+// ListContact gets list for existing contacts using api
+func (c *LivespaceClient) ListContact(request model.ContactData) (contactM []model.ContactData, err error) {
+	aRequest := model.ListContact{
+		AuthorizedRequest: model.AuthorizedRequest{},
+		PaginatedRequest:  model.PaginatedRequest{},
+		ContactData:       request,
+	}
+
+	aRequest.AuthorizedRequest, err = c.prepareAuthorizedRequest()
 	if err != nil {
 		return nil, err
 	}
-	request.AuthorizedRequest.Type = "contact"
-	request.Limit = 1
 
-	if responseBytes, err := c.makeRequest("Contact/getAll", request, false); err != nil {
+	aRequest.AuthorizedRequest.Type = "contact"
+	aRequest.Limit = 1
+
+	responseBytes, err := c.makeRequest("Contact/getAll", request, false)
+	if err != nil {
 		return contactM, err
-	} else {
-		contactList := model.ContactList{}
-		_ = json.Unmarshal(responseBytes, &contactList)
-		if len(contactList.Data.Contact) > 0 {
-			return &contactList.Data.Contact[0], nil
-		}
 	}
-	return nil, nil
+
+	var contactList model.ContactList
+	err = json.Unmarshal(responseBytes, &contactList)
+	if err != nil {
+		return nil, err
+	}
+
+	return contactList.Data.Contact, nil
 }

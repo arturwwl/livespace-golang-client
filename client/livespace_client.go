@@ -1,8 +1,7 @@
-package livespace_client
+package livespaceclient
 
 import (
 	"github.com/arturwwl/livespace-golang-client/config"
-	//p24Error "github.com/arturwwl/p24-golang-client/error"
 )
 
 type LivespaceClient struct {

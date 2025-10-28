@@ -1,24 +1,31 @@
-package livespace_client
+package livespaceclient
 
 import (
 	"encoding/json"
 	"github.com/arturwwl/livespace-golang-client/model"
 )
 
-func (c *LivespaceClient) CreateNote(noteM *model.NoteData) (err error) { //TODO: custom error
+// CreateNote creates new note using api
+func (c *LivespaceClient) CreateNote(noteM model.NoteData) error {
+	var err error
 	request := model.CreateNote{
-		Contact: *noteM,
+		Contact: noteM,
 	}
 	request.AuthorizedRequest, err = c.prepareAuthorizedRequest()
 	if err != nil {
 		return err
 	}
 
-	if responseBytes, err := c.makeRequest("Contact/addContactNote", request, true); err != nil {
+	var responseBytes []byte
+	responseBytes, err = c.makeRequest("Contact/addContactNote", request, true)
+	if err != nil {
 		return err
-	} else {
-		contactSingle := model.ContactSingle{}
-		_ = json.Unmarshal(responseBytes, &contactSingle)
+	}
+
+	contactSingle := model.ContactSingle{}
+	err = json.Unmarshal(responseBytes, &contactSingle)
+	if err != nil {
+		return err
 	}
 
 	return nil

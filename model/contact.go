@@ -1,24 +1,25 @@
 package model
 
-type GetContact struct {
+// ListContact represents api request for listing contacts
+type ListContact struct {
 	AuthorizedRequest
 	PaginatedRequest
-	Emails     *string `json:"emails,omitempty" form:"emails,omitempty"`
-	Firstnames *string `json:"firstnames,omitempty" form:"firstnames,omitempty"`
-	Lastnames  *string `json:"lastnames,omitempty" form:"lastnames,omitempty"`
-	Phones     *string `json:"phones,omitempty" form:"phones,omitempty"`
+	ContactData
 }
 
+// CreateContact represents api request for creating contact
 type CreateContact struct {
 	AuthorizedRequest
 	Contact ContactData `json:"contact,omitempty"`
 }
 
+// ContactSingle represents api response for creating contact
 type ContactSingle struct {
 	Data ContactSingleItem `json:"data,omitempty"`
 	ResponseData
 }
 
+// ContactList represents api response for listing contacts
 type ContactList struct {
 	Data ContactListItem `json:"data,omitempty"`
 	ResponseData
@@ -27,6 +28,7 @@ type ContactList struct {
 type ContactListItem struct {
 	Contact []ContactData `json:"contact,omitempty"`
 }
+
 type ContactSingleItem struct {
 	Contact ContactData `json:"contact,omitempty"`
 }

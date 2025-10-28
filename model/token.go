@@ -1,5 +1,6 @@
 package model
 
+// GetToken represents api request data
 type GetToken struct {
 	ApiKey  string `form:"_api_key,omitempty"`
 	ApiAuth string `form:"_api_auth,omitempty"`

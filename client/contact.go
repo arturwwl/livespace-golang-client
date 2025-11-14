@@ -2,6 +2,7 @@ package livespaceclient
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/arturwwl/livespace-golang-client/model"
 )
 
@@ -63,7 +64,7 @@ func (c *LivespaceClient) ListContact(filters model.ListContactFilters) ([]model
 
 	request.AuthorizedRequest.Type = "contact"
 
-	responseBytes, err := c.makeRequest("Contact/getAll", request, false)
+	responseBytes, err := c.makeRequest("Contact/getAll", request, true)
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +72,7 @@ func (c *LivespaceClient) ListContact(filters model.ListContactFilters) ([]model
 	var contactList model.ContactList
 	err = json.Unmarshal(responseBytes, &contactList)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("json: %s error: %v", responseBytes, err)
 	}
 
 	return contactList.Data.Contact, nil

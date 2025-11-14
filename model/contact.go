@@ -57,7 +57,7 @@ type ContactData struct {
 	GroupsID         *[]string               `json:"groups_id,omitempty"`
 	Dataset          *map[string]interface{} `json:"dataset,omitempty"`
 	DatasetFieldName *map[string]*string     `json:"dataset_field_name,omitempty"`
-	DatasetFieldType *map[string]*string     `json:"dataset_field_type,omitempty"`
+	DatasetFieldType *map[string]*int        `json:"dataset_field_type,omitempty"`
 
 	FirstName     string     `json:"firstname,omitempty"`
 	LastName      string     `json:"lastname,omitempty"`
